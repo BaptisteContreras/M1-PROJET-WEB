@@ -1,0 +1,42 @@
+    <% users.forEach(function(user,i) { %>
+        <div id="accordion">
+
+        <div class="card">
+        <div class="card-header" id="heading<%= i %>" data-toggle="collapse" data-target="#collapse<%= i %>" aria-expanded="false" aria-controls="collapse<%= i %>">
+            <h5 class="mb-0">
+                <button class="btn btn-link" >
+                    <%= user.id %>
+                </button>
+                <% if(user.connected) {%>
+                    <span class="badge  badge-success">Connecté</span>
+
+                <% } else { %>
+                    <span class="badge  badge-danger">Déconnecté</span>
+
+                <% }%>
+            </h5>
+        </div>
+        <div id="collapse<%= i %>" class="collapse " aria-labelledby="heading<%= i %>" data-parent="#accordion">
+            <div class="card-body">
+                <div class="form-group">
+                    <label>TTL</label>
+                    <input disabled type="text" class="form-control" value=<%= user.ttl %> >
+                </div>
+                <div class="form-group">
+                    <label>image</label>
+                    <input disabled type="text" class="form-control" value=<%= user.url %> >
+                    <img src=<%= user.url %>  alt="image">
+                </div>
+                <form method="POST" action=<%= helper('admin/user/modifyPage') %> style="display: inline">
+                    <input type="hidden" name="login" value=<%= user.id %>>
+                    <button type="submit" class="btn btn-warning"><span class="fa fa-sm fa-edit"/> Editer</button>
+                </form>
+                <form method="POST" action=<%= helper('admin/user/delete') %> style="margin-top: 10px;display: inline">
+                    <input type="hidden" name="login" value=<%= user.id %>>
+                    <button type="submit" class="btn btn-danger"><span class="fa fa-trash"/>Supprimer</button>
+                </form>
+            </div>
+            </div>
+        </div>
+    </div>
+    <% }); %>

@@ -1,0 +1,200 @@
+---
+swagger: "2.0"
+info:
+  description: "This game is based on the well-known Pac-Man Game, but has been modified\
+    \ to fit a brand new threat: COVID-19..."
+  version: "1.0.0"
+  title: "The Infection Game"
+  contact:
+    name: "Lionel Médini"
+    url: "https://perso.liris.cnrs.fr/lionel.medini"
+  license:
+    name: "CC-BY-NC"
+    url: "http://creativecommons.org/licenses/by-nc/4.0/"
+host: "192.168.75.xx"
+basePath: "/api"
+tags:
+- name: "georesources"
+  description: "Server-side geolocalized resources"
+schemes:
+- "http"
+- "https"
+paths:
+  /resources:
+    get:
+      tags:
+      - "georesources"
+      summary: "Get all living resources"
+      description: "Returns an array containing the representations of all existing\
+        \ resources in the game if the user is alive, or only that of the user if\
+        \ she is dead"
+      operationId: "resourcesGET"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/GeoResource"
+        "401":
+          description: "User authentication failed"
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: "Georesources"
+  /resources/{resourceId}/position:
+    put:
+      tags:
+      - "georesources"
+      summary: "Update user's position"
+      description: "Send a LatLng object to the server."
+      operationId: "resourcesResourceIdPositionPUT"
+      consumes:
+      - "application/json"
+      parameters:
+      - name: "resourceId"
+        in: "path"
+        description: "User's login"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "position"
+        description: "User's position"
+        required: true
+        schema:
+          $ref: "#/definitions/LatLng"
+      responses:
+        "204":
+          description: "successful operation"
+        "400":
+          description: "Invalid position object"
+        "401":
+          description: "User authentication failed"
+        "404":
+          description: "User not found"
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: "Georesources"
+  /resources/{resourceId}/image:
+    put:
+      tags:
+      - "georesources"
+      summary: "(re)set user's image URL"
+      description: "Sets or updates the user's photo/icon/... image file URL"
+      operationId: "resourcesResourceIdImagePUT"
+      consumes:
+      - "application/json"
+      parameters:
+      - name: "resourceId"
+        in: "path"
+        description: "User's login"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "url"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "204":
+          description: "successful operation"
+        "400":
+          description: "Invalid image URL object"
+        "401":
+          description: "User authentication failed"
+        "404":
+          description: "User not found"
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: "Georesources"
+securityDefinitions:
+  bearerAuth:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+definitions:
+  GeoResource:
+    type: "object"
+    required:
+    - "id"
+    properties:
+      id:
+        type: "string"
+        example: "toto"
+        description: "User login or element id"
+      url:
+        type: "string"
+        example: "http://example.com/users/toto/avatar.png"
+        description: "image/icon URL"
+      position:
+        $ref: "#/definitions/LatLng"
+      blurred:
+        type: "boolean"
+        description: "Users' positions are blurred, whereas game elements are not"
+      role:
+        type: "string"
+        description: "Resource role in the game"
+        enum:
+        - "infected"
+        - "sane"
+        - "pill"
+        - "cluster"
+      ttl:
+        type: "integer"
+        description: "For infected users only: remaining living time in seconds"
+      status:
+        type: "string"
+        enum:
+        - "alive"
+        - "dead"
+        - "element"
+      trophys:
+        type: "array"
+        description: "For user resources only: other users that the current user has\
+          \ cured or infected, and elements that she has eaten or crossed"
+        items:
+          $ref: "#/definitions/Trophy"
+    example:
+      role: "infected"
+      id: "toto"
+      position: ""
+      ttl: 0
+      url: "http://example.com/users/toto/avatar.png"
+      blurred: true
+      status: "alive"
+      trophys:
+      - action: "infected"
+        id: ""
+      - action: "infected"
+        id: ""
+  LatLng:
+    type: "array"
+    description: "LatLng object as defined in Leaflet"
+    items:
+      type: "number"
+    minItems: 2
+    maxItems: 2
+  Trophy:
+    type: "object"
+    required:
+    - "id"
+    properties:
+      id:
+        $ref: "#/definitions/GeoResource/properties/id"
+      action:
+        type: "string"
+        enum:
+        - "infected"
+        - "cured"
+        - "eaten"
+        - "crossed"
+    description: "Description of a trophy over an existing resource in the game; TO\
+      \ BE MODIFIED..."
+    example:
+      action: "infected"
+      id: ""
+externalDocs:
+  description: "See M1IF13 practicals 2020 #3"
+  url: "https://forge.univ-lyon1.fr/LIONEL.MEDINI/m1if13-2020/-/tree/master/tp3"

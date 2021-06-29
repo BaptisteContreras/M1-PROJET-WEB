@@ -1,0 +1,29 @@
+<!-- views/pages/game.ejs -->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <%- include('../partials/head'); -%>
+</head>
+<body class="container-fluid" style="padding-left: 5%;padding-right: 5%">
+
+<header>
+    <%- include('../partials/header'); -%>
+</header>
+
+<main>
+    <div class="jumbotron">
+        <h1>Gestion jeu</h1>
+        <h2>Liste parties</h2>
+        <%- include('listGame'); -%>
+        <h2>Création partie</h2>
+        <%- include('createGame'); -%>
+    </div>
+</main>
+
+<footer>
+    <%- include('../partials/footer'); -%>
+</footer>
+
+</body>
+</html>

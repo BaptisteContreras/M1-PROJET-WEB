@@ -1,0 +1,44 @@
+<!-- views/pages/game.ejs -->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <%- include('../partials/head'); -%>
+</head>
+<body class="container-fluid" style="padding-left: 5%;padding-right: 5%">
+
+<header>
+    <%- include('../partials/header'); -%>
+</header>
+
+<main>
+    <div class="jumbotron">
+        <h1>Gestion générale</h1>
+        <form method="POST" action="general/modify">
+            <div class="form-group">
+                <label for="ttl">TTL</label>
+                <input type="number" class="form-control" name="ttl" value="<%= general.ttl %>">
+            </div>
+            <div class="form-group">
+                <label for="zoom">Zoom</label>
+                <input type="number" class="form-control" name="zoom" value="<%= general.zoom %>">
+            </div>
+            <div class="form-group">
+                <label for="zoom">Temps avant lancement de la partie</label>
+                <input type="number" class="form-control" name="launch" value="<%= general.launch %>">
+            </div>
+            <div class="form-group">
+                <label for="zoom">Nombre de joueur minimum</label>
+                <input type="number" class="form-control" name="min" value="<%= general.min %>">
+            </div>
+            <button type="submit" class="btn btn-primary">Modifier</button>
+        </form>
+    </div>
+</main>
+
+<footer>
+    <%- include('../partials/footer'); -%>
+</footer>
+
+</body>
+</html>

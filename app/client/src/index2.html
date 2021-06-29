@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+		<meta charset="UTF-8">
+        <title>M1IF13 - Carte++</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+		<header>
+			<h1>MifMapApp</h1>
+		</header>
+		<section>
+			<h2>Position</h2>
+			<form onsubmit="return updateMap();" class="pure-form pure-form-stacked">
+				<fieldset>
+					<label for="lat">Lattitude : </label> <input type="text" id="lat" name="lat" value="45.782">
+					<label for="lon">Longitude : </label> <input type="text" id="lon" name="lon" value="4.8656">
+					<label for="zoom">Zoom : <span id="zoomValue"></span></label> <input type="range" id="zoom" name="zoom" min="1" max="20" value="15">
+					<input type="submit" value="Afficher" class="pure-button pure-button-active">
+				</fieldset>
+			</form>
+		</section>
+
+		<section>
+			<h2>Carte</h2>
+			<div id="map"></div>
+		</section>
+  </body>
+</html>

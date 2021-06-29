@@ -1,0 +1,200 @@
+<!-- views/pages/user.ejs -->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <%- include('../partials/head'); -%>
+</head>
+<body class="container-fluid" style="padding-left: 5%;padding-right: 5%">
+
+<header>
+    <%- include('../partials/header'); -%>
+</header>
+
+<main>
+    <div class="jumbotron">
+        <h2>Modifier les manches de la partie <%= game.name %></h2>
+        <form method="POST" id="modifForm" action="/">
+            <div class="row" id="manchesRow">
+                <% game.manches.forEach(function(manche, i) { %>
+
+                <div class="col-12 mancheRow" data-manche=<%= manche.id %>>
+                    <div class="card">
+                        <div class="card-header" data-manche=<%= manche.id %> style="cursor: pointer" id="heading<%= manche.id %>"  data-toggle="collapse" data-target="#collapse<%= manche.id %>" aria-expanded="false" aria-controls="collapse<%= manche.id %>">
+                            <h5 data-manche=<%= manche.id %> class="mb-0">
+                                <a data-manche=<%= manche.id %> class="btn btn-link" >
+                                    Manche n° <%= manche.id %>
+                                </a>
+                            </h5>
+                        </div>
+
+                        <div id="collapse<%= manche.id %>" class="collapse" aria-labelledby="heading<%= manche.id %>" data-parent="#accordion">
+                            <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-6 r1">
+                                            <div class="form-group">
+                                                <label for="ttl<%= manche.id %>">TTL de la manche : </label>
+                                                <input id="ttl<%= manche.id %>" class="form-control" value="<%= manche.ttl %>" type="number" name="ttl<%= manche.id %>">
+                                            </div>
+                                        </div>
+                                        <div class="col-6"></div>
+                                    </div>
+                               <div class="targetsDiv" id="targetsDiv<%= manche.id %>">
+                                   <% manche.targets.forEach(function(target, ii) { %>
+                                       <div class="row targetRow" id="targetRow<%= manche.id %>-<%= target.id %>" data-target=<%= target.id %> data-manche=<%= manche.id %> >
+                                           <div class="col-3">
+                                               <label for="tname<%= target.id %>">Nom de la cible : </label>
+                                               <input id="tname<%= target.id %>" class="form-control" value="<%= target.name %>" type="text" name="tname<%= manche.id %>-<%= target.id %>">
+                                           </div>
+                                           <div class="col-3">
+                                               <label for="tpos<%= manche.id %>-<%= target.id %>">Position </label>
+                                               <input id="tpos<%= manche.id %>-<%= target.id %>" class="form-control" value="<%= target.pos[0]+"/"+target.pos[1] %>" type="text" name="tpos<%= manche.id %>-<%= target.id %>">
+                                           </div>
+                                           <div class="col-3">
+                                               <label for="turl<%= target.id %>">Url </label>
+                                               <input id="turl<%= target.id %>" class="form-control" value="<%= target.url %>" type="text" name="turl<%= manche.id %>-<%= target.id %>">
+                                           </div>
+                                           <div class="col-3">
+                                               <button class="btn btn-info btnEditPosition" data-target=<%= target.id %> data-manche=<%= manche.id %> style="margin-top: 30px">Editer la position</button>
+                                               <button class="btn btn-danger btnDeleteTarget" data-target=<%= target.id %> data-manche=<%= manche.id %> style="margin-top: 30px">Supprimer</button>
+                                           </div>
+                                       </div>
+                                   <% }); %>
+                               </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <button class="btn btn-primary btnAddTarget" data-manche=<%= manche.id %> style="margin-top: 30px">Ajouter une cible</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                </div>
+
+                </div>
+                    <% }); %>
+
+            </div>
+           <div class="row" style="padding-top: 10px">
+               <div class="col-12">
+                   <button class="btn btn-danger" style="float: right" id="btnDeleteManche">Supprimer une manche</button>
+                   <button class="btn btn-success" style="float: right" id="btnAddManche">Ajouter une manche</button>
+               </div>
+           </div>
+            <input type="hidden" name="oldName" value=<%= game.name %>>
+            <div style="margin-top: 10px" class="card">
+                <div class="card-body">
+                    <section>
+                        <h2>Position</h2>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="lat">Lattitude : </label> <input class="form-control" type="number" id="lat" name="lat" value="45.782">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="lon">Longitude : </label> <input class="form-control" type="number" id="lon" name="lon" value="4.8656">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="zoom">Zoom : <span id="zoomValue"></span></label> <input class="form-control" type="range" id="zoom" name="zoom" min="1" max="20" value="15">
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="button" style="float: right" value="Afficher" class="btn btn-info">
+                                    </div>
+                                </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <section>
+                                    <h2>Carte</h2>
+                                    <div style="width: 100%" id="map"></div>
+                                </section>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+        <div class="row" style="margin-top: 30px">
+            <div class="col-12">
+                <button type="submit" style="float: right" id="applyForm" class="btn btn-primary">Modifier</button>
+            </div>
+        </div>
+        </form>
+
+    </div>
+
+
+</main>
+
+<div style="display: none" id="metier">
+    <div class="row targetRow" data-target="" data-manche="" >
+        <div class="col-3">
+            <label for="tname">Nom de la cible : </label>
+            <input id="tname" class="form-control" value="" type="text" name="tname">
+        </div>
+        <div class="col-3">
+            <label for="tpos">Position </label>
+            <input  id="tpos" class="form-control" value="" type="text" name="tpos">
+        </div>
+        <div class="col-3">
+            <label for="turl">Url </label>
+            <input id="turl" class="form-control" value="" type="text" name="turl">
+        </div>
+        <div class="col-3">
+            <button class="btn btn-info btnEditPosition" data-target="" data-manche="" style="margin-top: 30px">Editer la position</button>
+            <button class="btn btn-danger btnDeleteTarget" style="margin-top: 30px">Supprimer</button>
+        </div>
+    </div>
+    <div class="col-12 mancheRow" data-manche="">
+        <div class="card">
+            <div class="card-header" data-manche="" style="cursor: pointer" id="heading"  data-toggle="collapse" data-target="#collapse" aria-expanded="false" aria-controls="collapse">
+            <h5 data-manche="" class="mb-0">
+                <a data-manche="" class="btn btn-link" >
+                Manche n°
+                </a>
+            </h5>
+        </div>
+
+        <div id="collapse" class="collapse" aria-labelledby="heading" data-parent="#accordion">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6 r1">
+                        <div class="form-group">
+                            <label for="ttl">TTL de la manche : </label>
+                            <input id="ttl" class="form-control" value="" type="number" name="ttl">
+                        </div>
+                    </div>
+                    <div class="col-6"></div>
+                </div>
+                <div class="targetsDiv" id="targetsDiv">
+                </div>
+                <div class="row r2">
+                    <div class="col-12">
+                        <button class="btn btn-primary btnAddTarget" data-manche="" style="margin-top: 30px">Ajouter une cible</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    <%- include('../partials/footer'); -%>
+</footer>
+
+<script src="/public/map.js"></script>
+<script src="/public/admin.js"></script>
+    <script>
+        window.initAdminEditManche()
+    </script>
+
+</body>
+</html>

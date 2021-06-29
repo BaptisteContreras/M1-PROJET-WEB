@@ -1,0 +1,50 @@
+    <% games.forEach(function(game, i) { %>
+
+        <div class="card">
+            <div class="card-header" id="heading<%= i %>" data-toggle="collapse" data-target="#collapse<%= i %>" aria-expanded="false" aria-controls="collapse<%= i %>">
+                <h5 class="mb-0">
+                    <button class="btn btn-link" >
+                        <%= game.name %>
+                    </button>
+                    <% if (game.status === "waiting"){ %>
+                        <span class="badge  badge-warning">En attente</span>
+                    <% }else if(game.status === "active"){ %>
+                        <span class="badge  badge-success">Actif</span>
+                    <% }else {%>
+                        <span class="badge  badge-danger">Terminé</span>
+                    <% } %>
+                </h5>
+            </div>
+
+
+
+            <div id="collapse<%= i %>" class="collapse " aria-labelledby="heading<%= i %>" data-parent="#accordion">
+                <div class="card-body">
+                    <div class="btn-group" role="group">
+                        <form method="POST" action=<%= helper('admin/game/modifyPage') %>>
+                            <input type="hidden" name="name" value=<%= game.name %>>
+                            <button type="submit" class="btn btn-warning"><span class="fa fa-edit"/> Editer</button>
+                        </form>
+                        <form method="POST" action=<%= helper('admin/game/delete') %>>
+                            <input type="hidden" name="name" value=<%= game.name %>>
+                            <button type="submit" class="btn btn-danger"><span class="fa fa-trash"/>Supprimer</button>
+                        </form>
+                        <% if(game.status === "waiting") {%>
+                        <form method="POST" action=<%= helper('admin/game/activate') %> >
+                            <input type="hidden" name="name" value=<%= game.name %>>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-sync"></i>Commencer la partie</button>
+                        </form>
+                        <% }else if(game.status === "active") {%>
+                            <form method="POST" action=<%= helper('admin/game/stop') %>>
+                                <input type="hidden" name="name" value=<%= game.name %>>
+                                <button type="submit" class="btn btn-danger"><i class="fas fa-stop"></i>Stopper la partie</button>
+                            </form>
+                        <% } %>
+                        <a href="<%= helper('admin/game/'+game.name+'/manches') %>" class="btn btn-info"><i class="fas fa-pen"></i>Editer les manches</a>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% }); %>

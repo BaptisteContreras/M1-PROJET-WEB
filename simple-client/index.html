@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Client</title>
+
+
+</head>
+<body>
+    <div class="container">
+        <h1>Test Spring Boot users server in CORS</h1>
+        <h2>Test results: </h2><p id="testResult"></p>
+        <hr/>
+        <h2>Parameters / results</h2>
+        <label>Username <input class="form-control" type="text" id="username"/></label><br/>
+        <label>Password <input class="form-control" type="password" id="password"/></label><br/>
+        <label>Origin <input class="form-control" disabled type="text" id="origin"/></label><br/>
+        <label>Token <input class="form-control" disabled type="text" id="token"/></label><br/>
+        <label>Connected </label><p id="connected"></p><br/>
+        <hr/>
+        <h2>Launch tests</h2>
+        <h3>User Controller</h3>
+        <ul>
+            <li><h4>Get user by login:</h4> <button class="btn btn-primay" id="getUser">Test</button> (required field: Login)</li>
+        </ul>
+        <h3>Operation Controller</h3>
+        <ul>
+            <li><h4>Login (POST):</h4> <button class="btn btn-primay" id="login">Test</button> (required field: Login, Password)</li>
+            <li><h4>Logout (DELETE):</h4> <button class="btn btn-primay" id="logout">Test</button> (required field: Token)</li>
+            <li><h4>Authenticate (GET)</h4> <button class="btn btn-primay" id="authenticate">Test</button> (required field: Token, Origin)</li>
+        </ul>
+    </div>
+</body>
+<script type="text/javascript" src="client.js"></script>
+</html>

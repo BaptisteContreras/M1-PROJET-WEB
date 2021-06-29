@@ -1,0 +1,63 @@
+<!-- views/pages/user.ejs -->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <%- include('../partials/head'); -%>
+</head>
+<body class="container-fluid" style="padding-left: 5%;padding-right: 5%">
+
+<header>
+    <%- include('../partials/header'); -%>
+</header>
+
+<main>
+    <div class="jumbotron">
+        <h2>Modification partie</h2>
+        <form method="POST" action=<%= helper('admin/game/modify') %>>
+            <input type="hidden" name="oldName" value=<%= game.name %>>
+            <div class="form-group">
+                <label for="name">Nom de la partie</label>
+                <input type="text" class="form-control" name="name" value="<%= game.name %>">
+            </div>
+            <label for="players">Joueurs en jeu (pour en enlever un le déselectionner)</label>
+            <select multiple class="form-control" name="players">
+                <% game.players.forEach(function(player) { %>
+                <option selected><%= player %></option>
+                <% }); %>
+            </select>
+            <label for="possibleplayers">Joueurs sans jeu (pour en ajouter un le sélectionner)</label>
+            <select multiple class="form-control" name="possibleplayers">
+                <% players.forEach(function(player) { %>
+                    <option><%= player %></option>
+                <% }); %>
+            </select>
+            <div class="form-group">
+                <label for="ttl">TTL</label>
+                <input type="number" class="form-control" name="ttl" value="<%= game.ttl %>">
+            </div>
+            <div class="form-group">
+                <label for="zoom">Zoom</label>
+                <input type="number" class="form-control" name="zoom" value="<%= game.zoom %>">
+            </div>
+            <div class="form-group">
+                <label for="zoom">Temps avant lancement de la partie</label>
+                <input type="number" class="form-control" name="launchTime" value="<%= game.launchTime %>">
+            </div>
+            <div class="form-group">
+                <label for="zoom">Nombre de joueur minimum</label>
+                <input type="number" class="form-control" name="minPlayer" value="<%= game.minPlayer %>">
+            </div>
+            <button type="submit" class="btn btn-primary">Modifier</button>
+        </form>
+    </div>
+
+
+</main>
+
+
+<footer>
+    <%- include('../partials/footer'); -%>
+</footer>
+</body>
+</html>

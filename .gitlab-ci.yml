@@ -1,0 +1,91 @@
+image: maven:3.6.1-jdk-11
+
+
+
+stages:
+  - test
+  - install
+  - deploy_client
+  - deploy
+  - deploy2
+
+deploy:
+  stage: deploy
+  image: debian
+  script:
+    - apt-get update -y
+    - apt-get install -y sshpass
+    - ls
+    - ls $targetExec
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "ls"
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "mkdir tmp"
+    - sshpass -p $SSHPASS scp "users/target/usersspringboot-0.0.1-SNAPSHOT.jar" $user@$ip:/home/deployerci/tmp
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "rm current"
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "rm -rf last"
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "mv prod last"
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "mv tmp prod"
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "ln -s prod/ current"
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "screen -S restart -d -m /home/deployerci/restart.sh"
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "ps -aux | grep java"
+
+
+deploy_client:
+  stage: deploy
+  image: debian
+  script:
+    - apt-get update -y
+    - apt-get install -y sshpass
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "rm /home/deployerci/simple-client/*"
+    - sshpass -p $SSHPASS scp "simple-client/index.html" $user@$ip:/home/deployerci/simple-client/index.html
+    - sshpass -p $SSHPASS scp "simple-client/client.js" $user@$ip:/home/deployerci/simple-client/client.js
+
+
+deploy_statics:
+  stage: deploy2
+  image: debian
+  script:
+    - apt-get update -y
+    - apt-get install -y sshpass
+    - ls app
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "ls /home/deployerci/api"
+    - sshpass -p $SSHPASS scp -r "app/client" $user@$ip:/home/deployerci/api/clientTmp
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "cd /home/deployerci/api/clientTmp && npm install"
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "cd /home/deployerci/api/clientTmp && npm run build"
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "rm -rf /home/deployerci/api/client"
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "mv /home/deployerci/api/clientTmp /home/deployerci/api/client"
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "cp /home/deployerci/api/client/src/img/* /home/deployerci/api/client/dist/"
+
+
+deploy_api:
+  stage: deploy2
+  image: debian
+  script:
+    - apt-get update -y
+    - apt-get install -y sshpass
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "ls /home/deployerci/api"
+    - sshpass -p $SSHPASS scp -r "app/server" $user@$ip:/home/deployerci/api/serverTmp
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "cd /home/deployerci/api/serverTmp && npm install"
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "rm -rf /home/deployerci/api/server"
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "mv /home/deployerci/api/serverTmp /home/deployerci/api/server"
+    - sshpass -p $SSHPASS ssh -oStrictHostKeyChecking=no $user@$ip "screen -S restartapi -d -m /home/deployerci/restartapi.sh"
+
+install:
+  stage: install
+  artifacts:
+    paths:
+        - users/target/usersspringboot-0.0.1-SNAPSHOT.jar
+    expire_in: 1 day
+  image: maven:3.6.1-jdk-11
+  script:
+    - cd users/
+    - . proxy.sh
+    - mvn package
+    - ls target
+
+test:
+  stage: test
+  image: maven:3.6.1-jdk-11
+  script:
+    - cd users/
+    - . proxy.sh
+    - mvn test

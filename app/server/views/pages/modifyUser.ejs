@@ -1,0 +1,41 @@
+<!-- views/pages/user.ejs -->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <%- include('../partials/head'); -%>
+</head>
+<body class="container-fluid" style="padding-left: 5%;padding-right: 5%">
+
+<header>
+    <%- include('../partials/header'); -%>
+</header>
+
+<main>
+    <div class="jumbotron">
+        <h2>Modification utilisateur</h2>
+        <form method="POST" action=<%= helper('admin/user/modify') %>>
+            <input type="hidden" name="oldLogin" value=<%= user.id %>>
+            <div class="form-group">
+                <label for="login">Login</label>
+                <input type="text" class="form-control" name="login" value="<%= user.id %>">
+            </div>
+            <div class="form-group">
+                <label for="url">Url</label>
+                <input type="text" class="form-control" name="url" value="<%= user.url %>">
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" class="form-control" name="password">
+            </div>
+            <button type="submit" class="btn btn-primary">Modifier</button>
+        </form>
+    </div>
+</main>
+
+
+<footer>
+    <%- include('../partials/footer'); -%>
+</footer>
+</body>
+</html>
